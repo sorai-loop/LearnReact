@@ -11,7 +11,10 @@ export default function Home(){
       <p className="text2xl">{count}</p>
       <button
         className="px-4 py-2 rounded-xl bg-black text-white"
-        onClick={() => setCount(count + 1)}
+        onClick={() => {setCount(prev => prev + 1);
+  setCount(prev => prev + 1);
+        }
+        }
         >
         +1
         </button>
