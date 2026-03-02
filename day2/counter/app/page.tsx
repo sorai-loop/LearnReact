@@ -9,7 +9,7 @@ export default function Component(){
     <>
       <div>
         {value}
-        <button onClick={()=>setValue(value+1)}>
+        <button onClick={()=>setValue(prev => prev + 1)}>
         +1
         </button>
       </div>
@@ -17,7 +17,7 @@ export default function Component(){
         <button onClick={()=>
           {
             if(value-1>=0){
-              setValue(value-1);
+              setValue(prev => prev - 1);
             } 
           }
         }>
