@@ -1,8 +1,16 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import { useEffect } from 'react';
+import './App.css';
 
 function Counter(){
   const [count, setCount] = useState(0);
+  useEffect(() => {
+    console.log("読み込まれたよ！");
+  }, []);
+
+  useEffect(() => {
+    console.log("値が増えたよ！");
+  }, [count]);
 
   return (
     <>
