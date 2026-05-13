@@ -25,9 +25,17 @@ function Counter(){
 }
 
 function App() {
+
+  const productName = ['ノートPC', 'マウス', 'キーボード', 'タブレット'];
+
   return(
     <>
       <Counter /> 
+      <ul>
+        {productName.map((productName) => (
+          <li key={productName}>{productName}</li>
+        ))}
+      </ul>
     </>
   );
 }
