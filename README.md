@@ -430,3 +430,122 @@ export const useFoo = () =>{
 }
 ```
 変数とそれに関わる関数のみでまとめる。
+
+## 関数型プログラミングの考え方？
+表層から処理の流れを考えると
+
+- コンポーネント
+    - ドメインフック
+        - 汎用フック
+        - ピュアJS
+
+という形になる。
+
+例のコードは消費税の計算を行い返すコンポーネントを構成するものとする。
+
+### 汎用フック
+useStateをインポートして表面上の処理の変化をreact側に伝える役割。
+useStateを使用し、表示に関わる値をもち、値とそれをつかさどる関数をオブジェクトとして返す。
+細かい処理はピュアJSに委任するが疎結合のためここでそれを呼ぶことはない。
+どこでも使う機能のみを持たせるため固有名詞は使用せず、ドメイン知識を知っている必要がない。
+基本的な値の保持のみならそれは通常のuseStateが機能を持っている。
+この場合持たせる機能はinputタグの変化を感知して値を取得、格納する機能のみとなる。
+値、それを使う関数をオブジェクトとして返す。
+**useFooBar**という形でファイル名の先頭にuseを使用する。
+↓ダメな例
+```
+import {useState} from 'react';
+
+export const useConsumptionTax = (priceBeforeTax = 0) =>{
+    const [amount, setAmout] = (priceBeforeTax);
+
+    const Food = () =>{
+
+    }
+
+}
+```
+↓よい例
+```
+import { useState } from 'react';
+
+export const useNumberInput = (initialValue = 0) => {
+  const [value, setValue] = useState(initialValue);
+  const handleChange = (e) => {
+    const num = Number(e.target.value);
+    setValue(isNaN(num) ? 0 : num); 
+  };
+
+  const clear = () => setValue(0);
+
+  return { value, handleChange, clear };
+};
+```
+### ピュアJS
+reactの機能を使用しない純粋なJS。
+与えられた値から処理を行いそれを返す。
+この場合だと、食品かその他かを判別して引数の値に各割合を掛ける処理のみをもつ。
+```
+export const calculateTax = (price, isFood) => {
+  const rate = isFood ? 1.08 : 1.10;
+  return Math.floor(price * rate);
+};
+```
+### ドメインフック
+汎用フックとピュアJSを組み合わせてその特定の要素のみのための機能とする。
+それぞれをインポートする。
+汎用フックは命名後constから分割代入をもちいて機能を実体化させる。
+関数はそのまま使用する。
+
+```
+import { useState } from 'react';
+import { useNumberInput } from '../../../hooks/useNumberInput';
+import { calculateTax } from '../utils/taxCalculator';
+
+export const useTaxCalculator = () => {
+  const { value: price, handleChange: onPriceChange, clear } = useNumberInput(0);
+  
+  const [isFood, setIsFood] = useState(false);
+
+  const taxIncludedPrice = calculateTax(price, isFood);
+
+  const toggleFood = () => setIsFood(prev => !prev);
+
+  return {
+    price,
+    isFood,
+    taxIncludedPrice,
+    onPriceChange,
+    toggleFood,
+    clear
+  };
+};
+```
+
+### コンポーネント
+ドメインフックによって変化する表示をJSXで返す。
+インポート後汎用フックのときと同様に分割代入で実体化させ、必要なJSXを記載する。
+```
+import { useTaxCalculator } from '../hooks/useTaxCalculator';
+
+export const TaxCalculator = () => {
+  const { price, isFood, taxIncludedPrice, onPriceChange, toggleFood, clear } = useTaxCalculator();
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>税込み価格計算機</h2>
+      
+      <input type="number" value={price} onChange={onPriceChange} />
+      
+      <label>
+        <input type="checkbox" checked={isFood} onChange={toggleFood} />
+        食品（軽減税率 8%）
+      </label>
+
+      <button onClick={clear}>クリア</button>
+
+      <h3>税込金額: {taxIncludedPrice} 円</h3>
+    </div>
+  );
+};
+```

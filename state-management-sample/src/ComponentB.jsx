@@ -1,4 +1,8 @@
-function ComponentB({inputText}){
+import { useContext } from "react";
+import {TextContext} from "./App"
+
+function ComponentB(){
+    const {inputText} = useContext(TextContext);
     return(
         <div>
             <p>
