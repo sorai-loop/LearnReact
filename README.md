@@ -549,3 +549,58 @@ export const TaxCalculator = () => {
   );
 };
 ```
+
+## 実践app作成
+### ルーティング？
+URLに応じて異なるページを表示すること。
+URLと紐づけることでブラウザ側のブックマークや戻る等の操作が機能するうようになりアクセシビリティの向上につながる。
+
+React自体にこの機能はないもののReactRouterというライブラリで使用できる。
+
+インストールコマンド
+```
+npm install react-router-dom
+```
+#### BrowserRouter（ブラウザルーター）
+ルーティングを有効にする範囲を決めるもの。
+アプリ全体を囲うことでURLに対して切り替えられるようになる。
+#### Routes（ブラウザルーツ）
+どのURLにどのページを割り当てるか等の細かい設定をまとめるページ一覧のようなコンポーネント。
+#### Route（ルート）
+URLとコンポーネントの紐づけを行うコンポーネント。
+
+#### 表記例
+```
+<BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/new" element={<NewNote />} />
+        <Route path="/notes/:id" element={<NoteDetail />} />
+    </Routes>
+</BrowserRouter>
+```
+##### path
+どのURLにアクセスしたときに、
+
+一番下のは動的ルーティングテーブルという。
+idの部分は変数のようなもので値を自由にとることが出来る。
+
+##### element
+どのコンポーネントを表示するか
+### lucide-react
+reactアプリ用に設計されたアイコン表示ようライブラリ。
+
+インストールコマンド
+```
+npm install lucide-react
+```
+### HTTPリクエストメソッド
+#### GET
+データ取得
+#### POST
+新しいデータを作成するための処理
+#### PUT
+既存のデータを更新
+#### DELETE
+データの削除
+
